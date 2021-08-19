@@ -9,18 +9,17 @@ const scheduleMetting = async function(req, res) {
             })
         }
 
-        let existingSubSlot = []
         const checkExistingSlot = await scheduling.find({date:req.body.date})
-        console.log(checkExistingSlot)
-        for(let i=0; i< checkExistingSlot.length;i++){
-            console.log(+checkExistingSlot[i].startTime.substring(0,2), +checkExistingSlot[isSecureContext].endTime.substring(0,2))
-            if((+checkExistingSlot[i].startTime.substring(0,2)) == (+req.body.startTime.substring(0,2)), +checkExistingSlot[i].startTime.substring(0,2) ){
-
+        for(let i=0; i < checkExistingSlot.length;i++){
+            if( (+req.body.startTime.substring(0,2)) <  (+checkExistingSlot[i].endTime.substring(0,2))  && (+req.body.startTime.substring(0,2)) >  (+checkExistingSlot[i].startTime.substring(0,2)) || (+req.body.startTime.substring(0,2)) ==  (+checkExistingSlot[i].startTime.substring(0,2)) && (+req.body.startTime.substring(0,2)) ==  (+checkExistingSlot[i].startTime.substring(0,2))){
+                return res.status(401).json({
+                    message:"Slot already booked"
+                })
             }
         }
-        // console.log(endTime - startTime)
-        // const createScheduling = await scheduling.create(req.body);
-        console.log(createScheduling)
+
+        const createScheduling = await scheduling.create(req.body);
+
         if(!createScheduling){
             return res.status(500).json({
                 message:"some thing went wrong"
@@ -28,7 +27,7 @@ const scheduleMetting = async function(req, res) {
         }
         res.status(200).json({data:createScheduling})
     } catch (error) {
-        
+        console.log(error)
     }
 }
 
